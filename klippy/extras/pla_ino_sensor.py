@@ -286,7 +286,7 @@ class PLA_INO_Sensor:
             else:
                 break
 
-        logging.info(f"J: Read queue contents: {self.read_queue}")
+        logging.info(f"J: Read queue contents: {self.read_queue}, timestamp: {self.reactor.monotonic()}")
 
         self._process_read_queue()
         return eventtime + SERIAL_TIMER
@@ -313,7 +313,7 @@ class PLA_INO_Sensor:
                     self.disconnect()
                     break
 
-        logging.info("J: Write queue is empty.")
+        logging.info(f"J: Write queue is empty. timestamp: {self.reactor.monotonic()}")
         return eventtime + SERIAL_TIMER
 
     def _get_extruder_for_commands(self, index, gcmd):
