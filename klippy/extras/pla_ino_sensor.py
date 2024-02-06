@@ -264,6 +264,7 @@ class PLA_INO_Sensor:
         while True:
             try:
                 raw_bytes = ""
+                logging.info(f"J: Bytes in buffer: {self.serial.in_waiting}")
                 if self.serial.in_waiting > 0:
                     raw_bytes = self.serial.read()
             except Exception as e:
