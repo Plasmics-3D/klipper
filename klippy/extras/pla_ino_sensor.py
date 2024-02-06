@@ -7,6 +7,7 @@ import logging
 import serial
 from . import bus
 from serial import SerialException
+import os
 
 # from queue import Queue, Empty
 
@@ -189,6 +190,7 @@ class PLA_INO_Sensor:
         :rtype: _type_
         """
         logging.info(f"J: SAMPLE PLA INO CALLED WITH TIME {eventtime}")
+        logging.info(f"J: available serial paths {os.listdir('/dev/serial/by-id/')}")
         if self._failed_connection_attempts < 5:
             try:
                 if self.serial is None:
