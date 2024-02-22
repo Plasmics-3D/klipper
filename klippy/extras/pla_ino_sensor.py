@@ -189,8 +189,8 @@ class PLA_INO_Sensor:
         :return: _description_
         :rtype: _type_
         """
-        logging.info(f"J: SAMPLE PLA INO CALLED WITH TIME {eventtime}")
-        logging.info(f"J: available serial paths {os.listdir('/dev/serial/by-id/')}")
+        # logging.info(f"J: SAMPLE PLA INO CALLED WITH TIME {eventtime}")
+        # logging.info(f"J: available serial paths {os.listdir('/dev/serial/by-id/')}")
         if self._failed_connection_attempts < 5:
             try:
                 if self.serial is None:
@@ -264,7 +264,7 @@ class PLA_INO_Sensor:
         while True:
             try:
                 raw_bytes = ""
-                logging.info(f"J: Bytes in buffer: {self.serial.in_waiting}")
+                # logging.info(f"J: Bytes in buffer: {self.serial.in_waiting}")
                 if self.serial.in_waiting > 0:
                     raw_bytes = self.serial.read()
             except Exception as e:
@@ -287,7 +287,7 @@ class PLA_INO_Sensor:
             else:
                 break
 
-        logging.info(f"J: Read queue contents: {self.read_queue}, timestamp: {self.reactor.monotonic()}")
+        # logging.info(f"J: Read queue contents: {self.read_queue}, timestamp: {self.reactor.monotonic()}")
 
         self._process_read_queue()
         return eventtime + SERIAL_TIMER
@@ -301,9 +301,9 @@ class PLA_INO_Sensor:
         :rtype: ?
         """
         while not len(self.write_queue) == 0:
-            logging.info(
-                f"J: Current elements in the write queue waiting to be sent to ino: {self.write_queue}"
-            )
+            # logging.info(
+            #     f"J: Current elements in the write queue waiting to be sent to ino: {self.write_queue}"
+            # )
             text_line = self.write_queue.pop(0)
 
             if text_line:
@@ -314,7 +314,7 @@ class PLA_INO_Sensor:
                     self.disconnect()
                     break
 
-        logging.info(f"J: Write queue is empty. timestamp: {self.reactor.monotonic()}")
+        # logging.info(f"J: Write queue is empty. timestamp: {self.reactor.monotonic()}")
         return eventtime + SERIAL_TIMER
 
     def _get_extruder_for_commands(self, index, gcmd):
