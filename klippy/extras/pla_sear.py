@@ -112,9 +112,6 @@ class PLA_SensorArray:
 
         logging.info("J: SensorArray shut down complete.")
 
-    def setup_callback(self, cb):
-        self._callback = cb
-
     def get_report_time_delta(self):
         return SERIAL_TIMER
 
@@ -153,7 +150,6 @@ class PLA_SensorArray:
             return self.reactor.NEVER
 
         current_time = self.reactor.monotonic()
-        self._callback(current_time, self.temp)
         return eventtime + SERIAL_TIMER
 
     def _init_PLA_SEAR(self):
