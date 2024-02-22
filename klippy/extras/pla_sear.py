@@ -10,7 +10,7 @@ from serial import SerialException
 
 # from queue import Queue, Empty
 
-# determines the timing for all interactions with INO including reading, writing and connection (attempts)
+# determines the timing for all interactions with SensorArray including reading, writing and connection (attempts)
 SERIAL_TIMER = 0.1
 
 
@@ -143,7 +143,7 @@ class PLA_SensorArray:
         :return: _description_
         :rtype: _type_
         """
-        # logging.info(f"J: SAMPLE PLA INO CALLED WITH TIME {eventtime}")
+        logging.info(f"J: SAMPLE PLA INO CALLED WITH TIME {eventtime}")
         if self._failed_connection_attempts < 5:
             try:
                 if self.serial is None:
@@ -225,7 +225,7 @@ class PLA_SensorArray:
             else:
                 break
 
-        # logging.info(f"J: Read queue contents: {self.read_queue}")
+        logging.info(f"J: Read queue contents: {self.read_queue}")
         
         self.last_debug_timestamp = self.reactor.monotonic()
         self._process_read_queue()
@@ -240,9 +240,9 @@ class PLA_SensorArray:
         :rtype: ?
         """
         while not len(self.write_queue) == 0:
-            # logging.info(
-            #     f"J: Current elements in the write queue waiting to be sent to ino: {self.write_queue}"
-            # )
+            logging.info(
+                f"J: Current elements in the write queue waiting to be sent to ino: {self.write_queue}"
+            )
             text_line = self.write_queue.pop(0)
 
             if text_line:
@@ -256,7 +256,7 @@ class PLA_SensorArray:
         # logging.info("J: Write queue is empty.")
         return eventtime + SERIAL_TIMER
 
-    cmd_INO_FREQUENCY_help = ""
+    cmd_SEAR_START_CALIBRATION_PROCESS_help = "Command to start the calibration wizard on the SensorArray."
 
     def cmd_SEAR_START_CALIBRATION_PROCESS(self, gcmd):
         """custom gcode command for starting the sear calibration process
@@ -264,9 +264,8 @@ class PLA_SensorArray:
         :param gcmd: gcode command (object) that is processed
         :type gcmd: ?
         """
-        print("")
+        logging.info("SensorArray calibration process started.")
 
-    cmd_SEAR_START_CALIBRATION_PROCESS_help = "Command to start the calibration wizard on the SensorArray."
 
 
     def _process_read_queue(self):
@@ -276,9 +275,9 @@ class PLA_SensorArray:
             tmp = str(text_line.rstrip("\x00"))
             self.gcode.respond_info(f"Output from SensorArray: {str(tmp)}"
             )
-            # logging.info(
-            #     f"J: Output from INO: {str(tmp)}"
-            # )
+            logging.info(
+                f"J: Output from INO: {str(tmp)}"
+            )
 
 
 def load_config(config):
