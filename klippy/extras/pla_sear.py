@@ -47,6 +47,7 @@ class PLA_SensorArray:
         #
         self.last_debug_timestamp = self.reactor.monotonic()
         self.last_debug_message = ""
+        self.serial_port = config.get("serial")
 
         self.printer.register_event_handler("klippy:connect", self._handle_connect)
         self.printer.register_event_handler(
@@ -64,15 +65,6 @@ class PLA_SensorArray:
                 desc=self.cmd_SEAR_START_CALIBRATION_PROCESS_help,
             )
             logging.info(f"J: All Gcode commands added.")
-
-    def process_config(self, config):
-        """Reads out the config file and sets parameters necessary for the serial connection to the ino boards
-
-        :param config: config file
-        :type config: ?
-        """
-        self.baud = 115200
-        self.serial_port = config.get("serial")
         self.sample_timer = self.reactor.register_timer(
             self._sample_PLA_SEAR, self.reactor.NOW
         )
