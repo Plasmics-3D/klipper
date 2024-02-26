@@ -12,7 +12,7 @@ from serial import SerialException
 
 # determines the timing for all interactions with SensorArray including reading, writing and connection (attempts)
 SERIAL_TIMER = 0.1
-
+BAUD = 115200
 
 class PLA_SensorArray:
     """Custom class for the plasmics SensorArray"""
@@ -138,7 +138,7 @@ class PLA_SensorArray:
                 if self.serial is None:
                     self._handle_connect()
                 else:
-                    self.write_queue.append("-r")
+                    self.write_queue.append("read")
             except serial.SerialException:
                 logging.error("Unable to communicate with SensorArray. Sample")
                 self.temp = 0.0
@@ -157,7 +157,7 @@ class PLA_SensorArray:
         and sending the pid control parameters
         """
         try:
-            self.serial = serial.Serial(self.serial_port)
+            self.serial = serial.Serial(self.serial_port,BAUD,timeout=1)
             logging.info("Connection to SensorArray successfull.")
             self._failed_connection_attempts = 0
         except Exception as e:
@@ -193,6 +193,8 @@ class PLA_SensorArray:
                 raw_bytes = ""
                 if self.serial.in_waiting > 0:
                     raw_bytes = self.serial.read()
+                else:
+                    logging.info("J: nothing to read")
             except Exception as e:
                 logging.info(f"J: error in serial readout: {e}")
                 self.disconnect()
@@ -200,8 +202,9 @@ class PLA_SensorArray:
 
             if len(raw_bytes):
                 text_buffer = self.read_buffer + str(raw_bytes.decode())
+                logging.info(text_buffer)
                 while True:
-                    i = text_buffer.find("\x00")
+                    i = text_buffer.find("\r\n")
                     if i >= 0:
                         line = text_buffer[0 : i + 1]
                         self.read_queue.append(line.strip())
@@ -209,6 +212,13 @@ class PLA_SensorArray:
                     else:
                         break
                 self.read_buffer = text_buffer
+            
+            if len(raw_bytes)>1000:
+                logging.info("J: Buffer to large.")
+                self.printer.invoke_shutdown(
+                "Buffer to large."
+                )
+
 
             else:
                 break
@@ -228,14 +238,17 @@ class PLA_SensorArray:
         :rtype: ?
         """
         while not len(self.write_queue) == 0:
+            0
             logging.info(
                 f"J: Current elements in the write queue waiting to be sent to ino: {self.write_queue}"
             )
             text_line = self.write_queue.pop(0)
 
             if text_line:
+                logging.info(f"J: {((text_line).encode())}, {text_line}")
                 try:
-                    self.serial.write((text_line + ";\x00").encode())
+                    self.serial.write(text_line.encode())
+
                 except Exception as e:
                     logging.info(f"J: error in serial communication (writing): {e}")
                     self.disconnect()
