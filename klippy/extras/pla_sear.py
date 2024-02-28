@@ -18,7 +18,7 @@ class PLA_SensorArray:
     """Custom class for the plasmics SensorArray"""
 
     def __init__(self, config):
-        """The sensor is initialized, this includes especially
+        """The sensor is initialized, this includes especially`
         - the registration for specific events (and how to handle those)
         - the configuration of SensorArray specific G_code commands
 
