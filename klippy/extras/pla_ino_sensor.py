@@ -348,9 +348,9 @@ class PLA_INO_Sensor:
         :raises gcmd.error: raises error if command can not be executed on the configured heater
         """
         if heater.__class__.__name__ == "PLA_INO_Heater":
-            logging.info("J: sending command to PLA_INO_Heater")
+            # logging.info("J: sending command to PLA_INO_Heater")
             queue = heater.sensor.write_queue
-            logging.info(f"J: queue: {queue}, message: {message}")
+            # logging.info(f"J: queue: {queue}, message: {message}")
             queue.append(message)
         else:
             raise gcmd.error("Command not defined for this heater.")
@@ -503,7 +503,7 @@ class PLA_INO_Sensor:
 
                 self.temp = int(debug_dictionary["T_a"]) / 100
 
-                logging.info(f"J: debug dictionary: {debug_dictionary}")
+                # logging.info(f"J: debug dictionary: {debug_dictionary}")
                 # for error output:
                 read_from_board = str(debug_dictionary["err"]).zfill(
                     6
@@ -520,9 +520,9 @@ class PLA_INO_Sensor:
                     read_from_board_out = read_from_board_out + " | heating fast"
                 if read_from_board[4] == "1":
                     read_from_board_out = read_from_board_out + " | no temp read"
-                logging.info(
-                    f"J: INO debug output {debug_dictionary},{read_from_board}"
-                )
+                # logging.info(
+                #     f"J: INO debug output {debug_dictionary},{read_from_board}"
+                # )
 
                 self.debug_dictionaries.append(debug_dictionary)
                 self.read_from_board_outs.append(read_from_board_out)
@@ -535,9 +535,9 @@ class PLA_INO_Sensor:
             else:
                 self.gcode.respond_info(f"Output from INO: {str(tmp)}"
                 )
-                logging.info(
-                    f"J: Output from INO: {str(tmp)}"
-                )
+                # logging.info(
+                #     f"J: Output from INO: {str(tmp)}"
+                # )
 
 
 def load_config(config):
