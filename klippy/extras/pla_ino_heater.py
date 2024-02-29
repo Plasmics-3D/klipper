@@ -12,8 +12,10 @@ PID_PARAM_BASE = 255.0
 INO_REPORT_TIME = 0.3
 INO_MIN_REPORT_TIME = 0.1
 
+
 class PLA_INO_Heater:
     """Custom heater class for the INO heater"""
+
     def __init__(self, config, sensor):
         """Initialization of the INO Heater class
 
@@ -107,7 +109,7 @@ class PLA_INO_Heater:
     def set_temp(self, degrees):
         """Function used to set the temperature.
         In contrast to the normal heater, this command will write to the serial connection
-        opened by the respective INO Sensor. 
+        opened by the respective INO Sensor.
 
         :param degrees: the target temperature
         :raises self.printer.command_error: raises error if target temperature is out of bounds
@@ -119,11 +121,12 @@ class PLA_INO_Heater:
             )
         with self.lock:
             self.target_temp = degrees
-            logging.info(
-                f"J: set_temp -> get the serial object from the printer {self.sensor.write_queue}"
-            )
-            s = "s " + str(int(self.target_temp)) + "\0"
-            self.sensor.write_queue.put(s)
+            logging.info(f"J: set_temp -> to {self.target_temp} degrees")
+            s = f"s {str(int(self.target_temp))}"
+            self.sensor.target_temp = self.target_temp
+            self.sensor.write_queue.append(s)
+            # also always get the debug output after setting the temperature
+            self.sensor.write_queue.append("d")
 
     def get_temp(self, eventtime):
         with self.lock:
@@ -178,6 +181,7 @@ class PLA_INO_Heater:
         logging.info(f"J: SET_HEATER_TEMPERATURE fired with temp {temp} ")
         pheaters = self.printer.lookup_object("heaters")
         pheaters.set_temperature(self, temp)
+
 
 ######################################################################
 # Bang-bang control algo
